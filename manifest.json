@@ -1,0 +1,22 @@
+{
+  "name": "Ordkort",
+  "short_name": "Ordkort",
+  "description": "Fota understrukna ord i en bok och gör Anki-kort av dem.",
+  "lang": "sv",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f3ee",
+  "theme_color": "#b06030",
+  "icons": [
+    { "src": "ikoner/ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "ikoner/ikon-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "ikoner/ikon-maskbar-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

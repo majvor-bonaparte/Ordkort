@@ -1,0 +1,227 @@
+/* Utseendet för appen. Telefonen först: allt ska gå att trycka på med en
+ * tumme, och inget får bli bredare än skärmen. */
+
+:root {
+  --bakgrund: #f6f3ee;
+  --yta: #ffffff;
+  --text: #222222;
+  --dampad: #6b6460;
+  --kant: #ddd6cd;
+  --accent: #b06030;
+  --accent-text: #ffffff;
+  --varning: #9a5b00;
+  --fel: #b3261e;
+  --ok: #2e7d32;
+  --skugga: 0 1px 3px rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bakgrund: #1b1918;
+    --yta: #262322;
+    --text: #ece7e2;
+    --dampad: #a69e97;
+    --kant: #3d3835;
+    --accent: #d9824d;
+    --accent-text: #1b1918;
+    --varning: #e0a54a;
+    --fel: #f08a80;
+    --ok: #7bc47f;
+    --skugga: none;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+/* Knappar och rader får display: flex längre ned, och det skulle annars
+ * vinna över webbläsarens egen regel för hidden -- dolda knappar syntes. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--bakgrund);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Plats för den fasta knappraden längst ned. */
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+}
+
+main, .topp {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.topp { padding-top: 16px; }
+.topp h1 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+.motorstatus { margin: 2px 0 12px; color: var(--dampad); font-size: 14px; min-height: 1.4em; }
+.motorstatus.fel { color: var(--fel); }
+
+.panel {
+  background: var(--yta);
+  border: 1px solid var(--kant);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--skugga);
+}
+
+.etikett { display: block; font-weight: 600; margin-bottom: 6px; }
+.hjalp { margin: 8px 0 0; color: var(--dampad); font-size: 13px; }
+code { font-size: 0.92em; }
+
+/* --- Knappar och fält --------------------------------------------------- */
+
+.knapp, button {
+  font: inherit;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-height: 44px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+button:disabled { opacity: 0.45; cursor: default; }
+.knapp.sekundar, button.sekundar {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+button.lank {
+  background: none;
+  color: var(--dampad);
+  padding: 6px 8px;
+  min-height: 36px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+input[type="text"], select {
+  font: inherit;
+  color: var(--text);
+  background: var(--yta);
+  border: 1px solid var(--kant);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+}
+input[type="text"]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.knappar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.knapp.stor { min-height: 64px; font-size: 18px; }
+
+.handord { display: flex; gap: 8px; }
+.handord input { flex: 1; }
+
+/* --- Kortleksväljaren ---------------------------------------------------- */
+
+.lekvaljare { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.nylek { display: flex; gap: 6px; flex-wrap: wrap; }
+.nylek input { flex: 1 1 180px; }
+.nylek[hidden] { display: none; }
+
+/* --- Meddelanden --------------------------------------------------------- */
+
+.meddelande {
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: var(--yta);
+  border: 1.5px solid var(--ok);
+}
+.meddelande.fel { border-color: var(--fel); }
+.meddelande p { margin: 0 0 6px; }
+.meddelande p:last-child { margin-bottom: 0; }
+
+.tomt { color: var(--dampad); text-align: center; padding: 24px 8px; }
+
+/* --- Ett foto ------------------------------------------------------------ */
+
+.foto { padding: 0; overflow: hidden; }
+.foto-huvud {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--kant);
+  display: grid;
+  gap: 8px;
+}
+.foto-titelrad { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.foto-titel { font-weight: 700; margin: 0; font-size: 17px; overflow-wrap: anywhere; }
+.foto-status { margin: 0; color: var(--dampad); font-size: 14px; }
+.foto-status.fel { color: var(--fel); white-space: pre-line; }
+
+.lekrad { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; }
+.lekrad > span { padding-top: 11px; font-size: 14px; color: var(--dampad); }
+
+/* --- Ett ord ------------------------------------------------------------- */
+
+.ord {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--kant);
+  display: grid;
+  gap: 8px;
+}
+.ord:last-child { border-bottom: 0; }
+.ord.ute { opacity: 0.55; }
+
+.lapp {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--kant);
+  background: #fff;
+}
+
+.ordrad { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
+.med { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+.med input { width: 22px; height: 22px; accent-color: var(--accent); }
+.ordtext { font-size: 18px; font-weight: 600; }
+
+.ordstatus { margin: 0; font-size: 14px; color: var(--dampad); }
+.ordstatus.varning { color: var(--varning); }
+.ordstatus.fel { color: var(--fel); }
+.ordstatus.ok { color: var(--ok); }
+
+.ordfot { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; justify-content: space-between; }
+.ordfot .lekvaljare { flex: 1 1 220px; }
+.ordknappar { display: flex; gap: 4px; }
+
+details.forhand summary { cursor: pointer; color: var(--accent); font-weight: 600; padding: 4px 0; }
+details.forhand[hidden] { display: none; }
+.kortvy { margin-top: 6px; }
+
+/* --- Knappraden längst ned ---------------------------------------------- */
+
+.botten {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--yta);
+  border-top: 1px solid var(--kant);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.summa { color: var(--dampad); font-size: 14px; min-width: 0; }
+.botten button { flex: 0 0 auto; }
+
+@media (min-width: 760px) {
+  .botten { padding-left: calc(50vw - 344px); padding-right: calc(50vw - 344px); }
+}

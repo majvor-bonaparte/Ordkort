@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b06030">
+  <!--
+    Säkerhetsregel (Content Security Policy): en lista över exakt vilka
+    adresser sidan får hämta kod från och skicka data till. Allt annat
+    stoppas av webbläsaren, även om det skulle smyga sig in i sidan.
+
+      script-src   kod: bara appens egna filer och de två biblioteksarkiven
+                   (OpenCV och Tesseract från jsDelivr, sql.js och JSZip
+                   från cdnjs). 'wasm-unsafe-eval' behövs för att köra
+                   WebAssembly -- läsmotorerna är skrivna i C++ och
+                   kompilerade till det.
+      worker-src   bakgrundstrådar: appens egen, och Tesseracts, som skapas
+                   ur minnet ("blob:").
+      connect-src  vart sidan får skicka förfrågningar: Språkbanken och
+                   biblioteksarkiven. Ingen annanstans -- inte ens om någon
+                   lyckades lägga in egen kod i sidan.
+      style-src    'unsafe-inline' behövs för kortets förhandsvisning, som
+                   har sin CSS inbakad på samma sätt som i Anki.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'wasm-unsafe-eval';
+    worker-src 'self' blob:;
+    connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://spraakbanken4.it.gu.se https://ws.spraakbanken.gu.se;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob:;
+    manifest-src 'self';
+    base-uri 'none';
+    form-action 'none';
+    object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Ordkort</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="ikoner/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="ikoner/apple-touch-icon.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="topp">
+  <h1>Ordkort</h1>
+  <p id="motorstatus" class="motorstatus" role="status">Startar läsmotorn …</p>
+</header>
+
+<main>
+  <section class="panel">
+    <span class="etikett" id="lek-etikett">Kortlek för nästa foto</span>
+    <div id="huvudlek"></div>
+    <p class="hjalp">
+      Nya kortlekar skapas i Anki när filen importeras.
+      Skriv <code>::</code> för en underkortlek, till exempel
+      <code>Svenska::Första världskriget</code>.
+    </p>
+  </section>
+
+  <section class="knappar">
+    <label class="knapp stor">
+      Ta foto
+      <input id="kamera" type="file" accept="image/*" capture="environment" hidden>
+    </label>
+    <label class="knapp stor sekundar">
+      Välj bilder
+      <input id="galleri" type="file" accept="image/*" multiple hidden>
+    </label>
+  </section>
+
+  <form id="handord" class="panel handord" autocomplete="off">
+    <input id="handord-text" type="text" placeholder="… eller skriv in ett ord"
+           autocapitalize="none" spellcheck="false" aria-label="Ord att lägga till">
+    <button type="submit" class="knapp">Lägg till</button>
+  </form>
+
+  <div id="meddelande" class="meddelande" role="status" hidden></div>
+
+  <div id="foton"></div>
+
+  <p id="tomt" class="tomt">
+    Stryk under okända ord med blyerts, fota sidan, så dyker orden upp här.
+    En sida i taget blir bäst.
+  </p>
+</main>
+
+<footer class="botten">
+  <span id="summa" class="summa">Inga kort än</span>
+  <button id="skapa" type="button" class="knapp" disabled>Skapa Anki-fil</button>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
