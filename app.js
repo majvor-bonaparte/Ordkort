@@ -787,3 +787,11 @@ async function startaMotorerna() {
 }
 startaMotorerna();
 rita();
+
+// Service workern gör att Chrome går med på att installera appen. Går det
+// inte att registrera den fungerar appen ändå, bara utan installation.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch((fel) => {
+    console.warn("Service workern kunde inte registreras:", fel);
+  });
+}
