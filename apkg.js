@@ -364,7 +364,15 @@ export async function byggPaket(kortlek, kort) {
   // "media" är en innehållsförteckning över bifogade filer. Vi har inga,
   // men filen måste finnas -- annars vägrar Anki att läsa paketet.
   zip.file("media", "{}");
-  return zip.generateAsync({ type: "blob", compression: "DEFLATE" });
+  // Filtypen avgör vilket program telefonen erbjuder sig att öppna filen
+  // med. JSZip märker annars filen som "application/zip", och då föreslår
+  // Android ett zip-program i stället för AnkiDroid -- en .apkg är visserligen
+  // en zip-fil inuti, men det är AnkiDroid som ska få den.
+  return zip.generateAsync({
+    type: "blob",
+    compression: "DEFLATE",
+    mimeType: "application/apkg",
+  });
 }
 
 /** Sparar paketet som en nedladdning. I telefonen hamnar det i Nedladdningar. */
@@ -392,7 +400,9 @@ export async function sparaPaket(blob, filnamn = "ordkort.apkg") {
     }
   }
 
-  const url = URL.createObjectURL(blob);
+  // Filen (med rätt filtyp), inte blob, så att nedladdningen märks som en
+  // Anki-fil även om den byggts någon annanstans.
+  const url = URL.createObjectURL(fil);
   const lank = document.createElement("a");
   lank.href = url;
   lank.download = filnamn;
