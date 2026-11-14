@@ -18,7 +18,7 @@
  * Språkbankens svar går förbi helt; webbläsaren sparar biblioteken själv.
  */
 
-const FORRAD = "ordkort-v2";
+const FORRAD = "ordkort-v3";
 
 const FILER = [
   "./",
@@ -68,8 +68,13 @@ self.addEventListener("fetch", (h) => {
   // Andra sajter (bibliotek, Språkbanken) och allt utom GET: rör inte.
   if (fraga.method !== "GET" || new URL(fraga.url).origin !== self.location.origin) return;
 
+  // cache: "no-cache" betyder: fråga alltid servern om filen ändrats.
+  // GitHub låter annars webbläsaren använda sin sparade kopia i tio minuter,
+  // och då syns en nyss uppladdad rättelse inte -- det hände med apkg.js.
+  // Har filen inte ändrats svarar servern kort "oförändrad", så det kostar
+  // nästan ingenting.
   h.respondWith(
-    fetch(fraga)
+    fetch(new Request(fraga.url, { cache: "no-cache" }))
       .then((svar) => {
         if (svar.ok) {
           const kopia = svar.clone();

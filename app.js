@@ -21,6 +21,10 @@ import { slaUpp, hittades, SprakbankenFel } from "./sprakbanken.js";
 import { byggKort } from "./kort.js";
 import { byggPaket, sparaPaket, KORT_CSS } from "./apkg.js";
 
+/** Visas längst ned i appen. Räkna upp den vid varje ändring som laddas upp,
+ *  så går det att se på telefonen om den nya versionen kommit fram. */
+const VERSION = "2026-11-14 c";
+
 // --- Minnet i webbläsaren --------------------------------------------------
 //
 // localStorage kan saknas eller vägra (privat läge, avstängd lagring). Appen
@@ -787,6 +791,7 @@ async function startaMotorerna() {
 }
 startaMotorerna();
 rita();
+document.querySelector("main").append(el("p", { class: "version" }, `Version ${VERSION}`));
 
 // Service workern gör att Chrome går med på att installera appen. Går det
 // inte att registrera den fungerar appen ändå, bara utan installation.
