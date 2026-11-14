@@ -18,7 +18,7 @@
  * Språkbankens svar går förbi helt; webbläsaren sparar biblioteken själv.
  */
 
-const FORRAD = "ordkort-v1";
+const FORRAD = "ordkort-v2";
 
 const FILER = [
   "./",
@@ -41,8 +41,15 @@ const FILER = [
 ];
 
 self.addEventListener("install", (h) => {
+  // En fil i taget, och ett misslyckande stoppar inte resten. Med addAll()
+  // räckte det att EN fil saknades på servern -- första gången mappen
+  // ikoner inte kom med i uppladdningen -- för att hela service workern
+  // skulle vägra starta, och då gick appen inte att installera.
   h.waitUntil(
-    caches.open(FORRAD).then((f) => f.addAll(FILER)).then(() => self.skipWaiting()),
+    caches
+      .open(FORRAD)
+      .then((f) => Promise.allSettled(FILER.map((fil) => f.add(fil))))
+      .then(() => self.skipWaiting()),
   );
 });
 
